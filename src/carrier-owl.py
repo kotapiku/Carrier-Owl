@@ -57,6 +57,7 @@ def serch_keywords(id_list, keywords_dict):
         _url = a.get('href')
         url = 'https://arxiv.org'+_url
 
+        print(url)
         response = requests.get(url)
         html = response.text
 
