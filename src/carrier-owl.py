@@ -57,15 +57,17 @@ def serch_keywords(id_list, keywords_dict):
         _url = a.get('href')
         url = 'https://arxiv.org'+_url
 
-        print(url)
         response = requests.get(url)
         html = response.text
 
         bs = BeautifulSoup(html)
-        title = bs.find('meta', attrs={'property': 'og:title'})['content']
-        abstract = bs.find(
-                'meta',
-                attrs={'property': 'og:description'})['content']
+        try:
+            title = bs.find('meta', attrs={'property': 'og:title'})['content']
+            abstract = bs.find(
+                    'meta',
+                    attrs={'property': 'og:description'})['content']
+        except:
+            continue
 
         sum_score = 0
         hit_kwd_list = []
