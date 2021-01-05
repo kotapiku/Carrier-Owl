@@ -21,7 +21,7 @@ warnings.filterwarnings('ignore')
 def get_articles_info(subject):
     weekday_dict = {0: 'Mon', 1: 'Tue', 2: 'Wed', 3: 'Thu',
                   4: 'Fri', 5: 'Sat', 6: 'Sun'}
-    url = f'https://arxiv.org/list/{subject}/pastweek?show=1000'
+    url = f'https://arxiv.org/list/{subject}/pastweek?show=100000'
     response = requests.get(url)
     html = response.text
     year = datetime.date.today().year
@@ -51,7 +51,7 @@ def get_articles_infos(subjects):
                   4: 'Fri', 5: 'Sat', 6: 'Sun'}
     id_list = []
     for subject in subjects:
-        url = f'https://arxiv.org/list/{subject}/pastweek?show=100000'
+        url = f'https://arxiv.org/list/{subject}/pastweek?show=1000'
         response = requests.get(url)
         html = response.text
         year = datetime.date.today().year
