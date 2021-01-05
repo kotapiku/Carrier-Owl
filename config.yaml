@@ -9,7 +9,7 @@ keywords:
         category theory: 3
 
 subjects:
-  - cs.CL
-  - cs.LO
   - math.CT
   - math.LO
+  - cs.CL
+  - cs.LO

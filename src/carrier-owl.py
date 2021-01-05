@@ -21,7 +21,7 @@ warnings.filterwarnings('ignore')
 def get_articles_info(subject):
     weekday_dict = {0: 'Mon', 1: 'Tue', 2: 'Wed', 3: 'Thu',
                   4: 'Fri', 5: 'Sat', 6: 'Sun'}
-    url = f'https://arxiv.org/list/{subject}/pastweek?show=100000'
+    url = f'https://arxiv.org/list/{subject}/pastweek?show=1000'
     response = requests.get(url)
     html = response.text
     year = datetime.date.today().year
@@ -256,9 +256,13 @@ def get_config():
 def main():
     config = get_config()
     slack = slackweb.Slack(url=os.getenv("SLACK_ID"))
-    id_list = get_articles_infos(config['subjects'])
-    results = generate_scripts(id_list, config['keywords'])
-    send2slack(results, slack)
+    for subject in config['subjects']:
+        print(subject)
+        id_list = get_articles_info(subject)
+        results = generate_scripts(id_list, config['keywords'])
+        send2slack(results, slack)
+    # id_list = get_articles_infos(config['subjects'])
+    # results = generate_scripts(id_list, config['keywords'])
 
 
 if __name__ == "__main__":
