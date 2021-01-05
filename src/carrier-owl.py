@@ -100,9 +100,7 @@ def generate_scripts(id_list, keywords_dict):
         hit_kwd_list = []
 
         for word in keywords_dict.keys():
-            score = keywords_dict[word]
             if word.lower() in abstract.lower():  # 全部小文字にすれば、大文字少文字区別しなくていい
-                sum_score += score
                 hit_kwd_list.append(word)
 
         title_trans = get_translated_text('ja', 'en', title)
@@ -119,6 +117,34 @@ def generate_scripts(id_list, keywords_dict):
     results = [urls, titles, abstracts, words]
 
     return results
+
+def send2slack2(results, slack, subject):
+    urls = results[0]
+    titles = results[1]
+    abstracts = results[2]
+    words = results[3]
+    scores = results[4]
+
+    # rank
+    idxs_sort = np.argsort(scores)
+    idxs_sort = idxs_sort[::-1]
+
+    # 通知
+    star = '*'*120
+    today = datetime.date.today()
+    text = f'{star}\n \t \t {today} {subject} \n{star}'
+    slack.notify(text=text)
+    for i in idxs_sort:
+        url = urls[i]
+        title = titles[i]
+        abstract = abstracts[i]
+        word = words[i]
+        score = scores[i]
+
+        text_slack = f'''
+                    \n score: `{score}`\n hit keywords: `{word}`\n url: {url}\n title:    {title}\n abstract: \n \t {abstract}\n{star}
+                       '''
+        slack.notify(text=text_slack)
 
 def serch_keywords(id_list, keywords_dict):
     urls = []
@@ -260,7 +286,7 @@ def main():
         print(subject)
         id_list = get_articles_info(subject)
         results = generate_scripts(id_list, config['keywords'])
-        send2slack(results, slack)
+        send2slack2(results, slack, subject)
     # id_list = get_articles_infos(config['subjects'])
     # results = generate_scripts(id_list, config['keywords'])
 
