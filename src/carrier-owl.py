@@ -75,7 +75,7 @@ def get_articles_infos(subjects):
         id_list.extend(bs.find_all(class_='list-identifier'))
     return id_list
 
-def generate_scripts(id_list):
+def generate_scripts(id_list, keywords_dict):
     urls = []
     titles = []
     abstracts = []
@@ -96,6 +96,14 @@ def generate_scripts(id_list):
                     attrs={'property': 'og:description'})['content']
         except:
             continue
+
+        hit_kwd_list = []
+
+        for word in keywords_dict.keys():
+            score = keywords_dict[word]
+            if word.lower() in abstract.lower():  # 全部小文字にすれば、大文字少文字区別しなくていい
+                sum_score += score
+                hit_kwd_list.append(word)
 
         title_trans = get_translated_text('ja', 'en', title)
         abstract = abstract.replace('\n', '')
@@ -249,7 +257,7 @@ def main():
     config = get_config()
     slack = slackweb.Slack(url=os.getenv("SLACK_ID"))
     id_list = get_articles_infos(config['subjects'])
-    results = generate_scripts(id_list)
+    results = generate_scripts(id_list, config['keywords'])
     send2slack(results, slack)
 
 
