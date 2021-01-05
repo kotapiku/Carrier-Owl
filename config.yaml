@@ -7,3 +7,9 @@ keywords:
         fibration: 3
         fixed point: 3
         category theory: 3
+
+subjects:
+  - cs.CL
+  - cs.LO
+  - math.CT
+  - math.LO
