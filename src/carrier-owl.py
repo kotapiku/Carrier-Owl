@@ -80,6 +80,7 @@ def generate_scripts(id_list, keywords_dict):
     titles = []
     abstracts = []
     words = []
+    scores = []
     for id_ in progress_bar(id_list):
         a = id_.find('a')
         _url = a.get('href')
@@ -97,24 +98,28 @@ def generate_scripts(id_list, keywords_dict):
         except:
             continue
 
+        sum_score = 0
         hit_kwd_list = []
 
         for word in keywords_dict.keys():
+            score = keywords_dict[word]
             if word.lower() in abstract.lower():  # 全部小文字にすれば、大文字少文字区別しなくていい
+                sum_score += score
                 hit_kwd_list.append(word)
+        if sum_score != 0:
+            title_trans = get_translated_text('ja', 'en', title)
+            abstract = abstract.replace('\n', '')
+            abstract_trans = get_translated_text('ja', 'en', abstract)
+            abstract_trans = textwrap.wrap(abstract_trans, 40)  # 40行で改行
+            abstract_trans = '\n'.join(abstract_trans)
 
-        title_trans = get_translated_text('ja', 'en', title)
-        abstract = abstract.replace('\n', '')
-        abstract_trans = get_translated_text('ja', 'en', abstract)
-        abstract_trans = textwrap.wrap(abstract_trans, 40)  # 40行で改行
-        abstract_trans = '\n'.join(abstract_trans)
+            urls.append(url)
+            titles.append(title_trans)
+            abstracts.append(abstract_trans)
+            words.append(hit_kwd_list)
+            scores.append(sum_score)
 
-        urls.append(url)
-        titles.append(title_trans)
-        abstracts.append(abstract_trans)
-        words.append(hit_kwd_list)
-
-    results = [urls, titles, abstracts, words]
+    results = [urls, titles, abstracts, words, scores]
 
     return results
 
