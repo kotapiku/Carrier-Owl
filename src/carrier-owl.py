@@ -145,12 +145,13 @@ def send2slack2(results, slack, subject):
     for i in idxs_sort:
         url = urls[i]
         title = titles[i]
+        title_en = titles_en[i]
         abstract = abstracts[i]
         word = words[i]
         score = scores[i]
 
         text_slack = f'''
-                    \n subject: `{subject}`\n hit keywords: `{word}`\n url: {url}\n title:    {title} ({title_en})\n abstract: \n \t {abstract}\n{star}
+                    \n subject: `{subject}`\n hit keywords: `{word}`\n url: {url}\n title: {title}\n        {title_en}\n abstract: \n \t {abstract}\n{star}
                        '''
         slack.notify(text=text_slack)
 
