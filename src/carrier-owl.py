@@ -78,6 +78,7 @@ def get_articles_infos(subjects):
 def generate_scripts(id_list, keywords_dict):
     urls = []
     titles = []
+    titles_en = []
     abstracts = []
     words = []
     scores = []
@@ -115,20 +116,22 @@ def generate_scripts(id_list, keywords_dict):
 
         urls.append(url)
         titles.append(title_trans)
+        titles_en.append(title)
         abstracts.append(abstract_trans)
         words.append(hit_kwd_list)
         scores.append(sum_score)
 
-    results = [urls, titles, abstracts, words, scores]
+    results = [urls, titles, titles_en, abstracts, words, scores]
 
     return results
 
 def send2slack2(results, slack, subject):
     urls = results[0]
     titles = results[1]
-    abstracts = results[2]
-    words = results[3]
-    scores = results[4]
+    titles_en = results[2]
+    abstracts = results[3]
+    words = results[4]
+    scores = results[5]
 
     # rank
     idxs_sort = np.argsort(scores)
@@ -147,7 +150,7 @@ def send2slack2(results, slack, subject):
         score = scores[i]
 
         text_slack = f'''
-                    \n score: `{score}`\n hit keywords: `{word}`\n url: {url}\n title:    {title}\n abstract: \n \t {abstract}\n{star}
+                    \n subject: `{subject}`\n hit keywords: `{word}`\n url: {url}\n title:    {title} ({title_en})\n abstract: \n \t {abstract}\n{star}
                        '''
         slack.notify(text=text_slack)
 
@@ -288,8 +291,8 @@ def main():
     config = get_config()
     slack = slackweb.Slack(url=os.getenv("SLACK_ID"))
     for subject in config['subjects']:
-        print(subject)
         id_list = get_articles_info(subject)
+        print('{}: {}'.format(subject, len(id_list)))
         results = generate_scripts(id_list, config['keywords'])
         send2slack2(results, slack, subject)
     # id_list = get_articles_infos(config['subjects'])
