@@ -150,9 +150,16 @@ def send2slack2(results, slack, subject):
         word = words[i]
         score = scores[i]
 
-        text_slack = f'''
-                    \n subject: `{subject}`\n hit keywords: `{word}`\n url: {url}\n title: {title}\n        {title_en}\n abstract: \n \t {abstract}\n{star}
-                       '''
+        text_slack = ''
+        if word == []:
+            text_slack = f'''
+                        \n subject: `{subject}`\n url: {url}\n title: {title}\n        {title_en}\n abstract: \n \t {abstract}\n{star}
+                           '''
+        else:
+            text_slack = f'''
+                        \n subject: `{subject}`\n hit keywords: `{word}`\n url: {url}\n title: {title}\n        {title_en}\n abstract: \n \t {abstract}\n{star}
+                           '''
+
         slack.notify(text=text_slack)
 
 def serch_keywords(id_list, keywords_dict):
