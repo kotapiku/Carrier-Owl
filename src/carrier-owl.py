@@ -75,7 +75,7 @@ def get_articles_infos(subjects):
         id_list.extend(bs.find_all(class_='list-identifier'))
     return id_list
 
-def generate_scripts(id_list, keywords_dict):
+def generate_scripts(id_list, keywords_dict, history):
     urls = []
     titles = []
     titles_en = []
@@ -84,6 +84,8 @@ def generate_scripts(id_list, keywords_dict):
     scores = []
     for id_ in progress_bar(id_list):
         a = id_.find('a')
+        if a in history:
+            continue
         _url = a.get('href')
         url = 'https://arxiv.org'+_url
 
@@ -298,11 +300,14 @@ def get_config():
 def main():
     config = get_config()
     slack = slackweb.Slack(url=os.getenv("SLACK_ID"))
+    history = []
     for subject in config['subjects']:
         id_list = get_articles_info(subject)
         print('{}: {}'.format(subject, len(id_list)))
-        results = generate_scripts(id_list, config['keywords'])
+        results = generate_scripts(id_list, config['keywords'], history)
         send2slack2(results, slack, subject)
+
+        history.append(list(map(lambda id_: id_.find('a'), progress_bar(id_list))))
     # id_list = get_articles_infos(config['subjects'])
     # results = generate_scripts(id_list, config['keywords'])
 
