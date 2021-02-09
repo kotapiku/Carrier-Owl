@@ -84,9 +84,9 @@ def generate_scripts(id_list, keywords_dict, history):
     scores = []
     for id_ in progress_bar(id_list):
         a = id_.find('a')
-        if a in history:
-            continue
         _url = a.get('href')
+        if _url in history:
+            continue
         url = 'https://arxiv.org'+_url
 
         response = requests.get(url)
