@@ -84,9 +84,9 @@ def generate_scripts(id_list, keywords_dict, history):
     scores = []
     for id_ in progress_bar(id_list):
         a = id_.find('a')
-        _url = a.get('href')
-        if _url in history:
+        if a in history:
             continue
+        _url = a.get('href')
         url = 'https://arxiv.org'+_url
 
         response = requests.get(url)
@@ -303,13 +303,13 @@ def main():
     history = []
     for subject in config['subjects']:
         id_list = get_articles_info(subject)
-        hist = list(map(lambda id_: id_.find('a').get('href'), progress_bar(id_list)))
         print('{}: {}'.format(subject, len(id_list)))
-        print(hist)
         results = generate_scripts(id_list, config['keywords'], history)
         send2slack2(results, slack, subject)
 
-        history.append(hist)
+        hist = list(map(lambda id_: id_.find('a'), progress_bar(id_list)))
+        print(hist)
+        history.extend(hist)
     # id_list = get_articles_infos(config['subjects'])
     # results = generate_scripts(id_list, config['keywords'])
 
