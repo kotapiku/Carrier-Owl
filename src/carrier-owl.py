@@ -303,11 +303,13 @@ def main():
     history = []
     for subject in config['subjects']:
         id_list = get_articles_info(subject)
+        hist = list(map(lambda id_: id_.find('a').get('href'), progress_bar(id_list)))
         print('{}: {}'.format(subject, len(id_list)))
+        print(hist)
         results = generate_scripts(id_list, config['keywords'], history)
         send2slack2(results, slack, subject)
 
-        history.append(list(map(lambda id_: id_.find('a'), progress_bar(id_list))))
+        history.append(hist)
     # id_list = get_articles_infos(config['subjects'])
     # results = generate_scripts(id_list, config['keywords'])
 
